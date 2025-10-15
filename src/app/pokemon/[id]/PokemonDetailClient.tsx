@@ -27,10 +27,41 @@ const statNames: { [key: string]: string } = {
   speed: "Speed",
 };
 
-function TypeBadge({ type }: { type: string }) {
+// type colors, source: https://gist.github.com/apaleslimghost/0d25ec801ca4fc43317bcff298af43c3
+const typeColors: { [key: string]: string } = {
+  normal: "bg-[#A8A77A]",
+  fire: "bg-[#EE8130]",
+  water: "bg-[#6390F0]",
+  electric: "bg-[#F7D02C]",
+  grass: "bg-[#7AC74C]",
+  ice: "bg-[#96D9D6]",
+  fighting: "bg-[#C22E28]",
+  poison: "bg-[#A33EA1]",
+  ground: "bg-[#E2BF65]",
+  flying: "bg-[#A98FF3]",
+  psychic: "bg-[#F95587]",
+  bug: "bg-[#A6B91A]",
+  rock: "bg-[#B6A136]",
+  ghost: "bg-[#735797]",
+  dragon: "bg-[#6F35FC]",
+  dark: "bg-[#705746]",
+  steel: "bg-[#B7B7CE]",
+  fairy: "bg-[#D685AD]",
+};
+
+function TypeBadge({
+  type,
+  pokemon,
+}: {
+  type: string;
+  pokemon: PokemonDetail;
+}) {
+  console.log(typeColors[type]);
   return (
     <span
-      className={`bg-gray-400 text-white text-sm font-medium px-3 py-1 rounded-lg capitalize`}
+      className={`${
+        typeColors[pokemon.types[0].type.name]
+      } brightness-110 text-gray-700 text-md font-bold px-3 py-1 rounded-lg capitalize`}
     >
       {type}
     </span>
@@ -81,29 +112,38 @@ export default function PokemonDetailClient({
           ← Back to Pokédex
         </Link>
 
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          <div className="text-center mb-6">
-            <span className="text-gray-400 text-lg font-bold">
-              #{pokemon.id}
-            </span>
-            <h1 className="text-4xl font-bold text-gray-800 capitalize mb-3">
-              {pokemon.name}
-            </h1>
+        <div
+          className={`${
+            typeColors[pokemon.types[0].type.name]
+          } rounded-2xl shadow-lg p-8`}
+        >
+          <div className="flex justify-between align-middle">
+            <div className="mb-6">
+              <h1 className="text-4xl font-bold text-white text-shadow-gray-700 capitalize mb-3">
+                {pokemon.name}
+              </h1>
 
-            <div className="flex justify-center gap-3 mb-6">
-              {pokemon.types.map((typeInfo) => (
-                <TypeBadge key={typeInfo.type.name} type={typeInfo.type.name} />
-              ))}
+              <div className="flex gap-3 mb-6">
+                {pokemon.types.map((typeInfo) => (
+                  <TypeBadge
+                    key={typeInfo.type.name}
+                    type={typeInfo.type.name}
+                    pokemon={pokemon}
+                  />
+                ))}
+              </div>
             </div>
+
+            <span className="text-white text-4xl font-bold">
+              #{pokemon.id.toString().padStart(3, "0")}
+            </span>
           </div>
 
-          <div className="bg-gradient-to-b from-gray-50 to-gray-100 rounded-2xl p-8 mb-6">
-            <img
-              src={pokemon.sprites.other["official-artwork"].front_default}
-              alt={pokemon.name}
-              className="w-64 h-64 mx-auto object-contain drop-shadow-2xl"
-            />
-          </div>
+          <img
+            src={pokemon.sprites.other["official-artwork"].front_default}
+            alt={pokemon.name}
+            className="w-64 h-64 mx-auto object-contain drop-shadow-2xl"
+          />
         </div>
 
         <div className="bg-white rounded-2xl shadow-lg mb-6">
