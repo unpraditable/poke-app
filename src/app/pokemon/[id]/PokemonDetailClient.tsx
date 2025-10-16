@@ -1,22 +1,7 @@
 "use client";
-import Link from "next/link";
+import { pokemonTypeColors } from "@/constants/PokemonTypeColors";
+import PokemonDetail from "@/interfaces/PokemonDetail";
 import { useState } from "react";
-
-interface PokemonDetail {
-  id: number;
-  name: string;
-  height: number;
-  weight: number;
-  types: { type: { name: string } }[];
-  abilities: { ability: { name: string } }[];
-  stats: { base_stat: number; stat: { name: string } }[];
-  sprites: {
-    other: {
-      "official-artwork": { front_default: string };
-    };
-  };
-  moves: { move: { name: string; url: string } }[];
-}
 
 const statNames: { [key: string]: string } = {
   hp: "HP",
@@ -27,28 +12,6 @@ const statNames: { [key: string]: string } = {
   speed: "Speed",
 };
 
-// type colors, source: https://gist.github.com/apaleslimghost/0d25ec801ca4fc43317bcff298af43c3
-const typeColors: { [key: string]: string } = {
-  normal: "bg-[#A8A77A]",
-  fire: "bg-[#EE8130]",
-  water: "bg-[#6390F0]",
-  electric: "bg-[#F7D02C]",
-  grass: "bg-[#7AC74C]",
-  ice: "bg-[#96D9D6]",
-  fighting: "bg-[#C22E28]",
-  poison: "bg-[#A33EA1]",
-  ground: "bg-[#E2BF65]",
-  flying: "bg-[#A98FF3]",
-  psychic: "bg-[#F95587]",
-  bug: "bg-[#A6B91A]",
-  rock: "bg-[#B6A136]",
-  ghost: "bg-[#735797]",
-  dragon: "bg-[#6F35FC]",
-  dark: "bg-[#705746]",
-  steel: "bg-[#B7B7CE]",
-  fairy: "bg-[#D685AD]",
-};
-
 function TypeBadge({
   type,
   pokemon,
@@ -56,11 +19,10 @@ function TypeBadge({
   type: string;
   pokemon: PokemonDetail;
 }) {
-  console.log(typeColors[type]);
   return (
     <span
       className={`${
-        typeColors[pokemon.types[0].type.name]
+        pokemonTypeColors[pokemon.types[0].type.name]
       } brightness-110 text-gray-700 text-md font-bold px-3 py-1 rounded-lg capitalize`}
     >
       {type}
@@ -84,7 +46,9 @@ function StatBar({
       <span className="text-gray-800 font-bold w-8 text-md">{value}</span>
       <div className="flex-1 bg-gray-200 rounded-full h-2">
         <div
-          className="h-2 rounded-full bg-green-500 transition-all duration-500"
+          className={`h-2 rounded-full ${
+            value > 59 ? "bg-green-500" : "bg-red-500"
+          } transition-all duration-500`}
           style={{ width: `${percentage}%` }}
         />
       </div>
@@ -112,7 +76,9 @@ export default function PokemonDetailClient({
         </Link> */}
 
       <div
-        className={`${typeColors[pokemon.types[0].type.name]} shadow-lg p-8`}
+        className={`${
+          pokemonTypeColors[pokemon.types[0].type.name]
+        } shadow-lg p-8`}
       >
         <div className="flex justify-between align-middle">
           <div className="mb-6">
