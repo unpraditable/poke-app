@@ -13,7 +13,7 @@ export default function PokemonCard({ pokemon }: { pokemon: Pokemon }) {
       <div
         className={`${
           pokemonTypeColors[pokemon.types[0]]
-        } rounded-lg shadow-lg px-6 py-2 text-center flex justify-between bg-[url(/pokeball.svg)] bg-size-[auto_100px] bg-no-repeat bg-bottom-right min-h-[200px]`}
+        } rounded-lg shadow-lg px-6 py-2 text-center flex justify-between bg-[url(/pokeball.svg)] bg-size-[auto_150px] bg-no-repeat bg-bottom-right min-h-[200px]`}
       >
         <div className="">
           <div className="flex flex-col gap-3 mb-6">
