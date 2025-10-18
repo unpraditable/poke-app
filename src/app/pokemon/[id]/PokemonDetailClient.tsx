@@ -1,4 +1,5 @@
 "use client";
+import TypeBadge from "@/components/TypeBadge";
 import { pokemonTypeColors } from "@/constants/PokemonTypeColors";
 import PokemonDetail from "@/interfaces/PokemonDetail";
 import { useState } from "react";
@@ -11,24 +12,6 @@ const statNames: { [key: string]: string } = {
   "special-defense": "Sp. Def",
   speed: "Speed",
 };
-
-function TypeBadge({
-  type,
-  pokemon,
-}: {
-  type: string;
-  pokemon: PokemonDetail;
-}) {
-  return (
-    <span
-      className={`${
-        pokemonTypeColors[pokemon.types[0].type.name]
-      } brightness-110 text-gray-700 text-md font-bold px-3 py-1 rounded-lg capitalize`}
-    >
-      {type}
-    </span>
-  );
-}
 
 function StatBar({
   statName,
@@ -91,7 +74,7 @@ export default function PokemonDetailClient({
                 <TypeBadge
                   key={typeInfo.type.name}
                   type={typeInfo.type.name}
-                  pokemon={pokemon}
+                  mainType={pokemonTypeColors[pokemon.types[0].type.name]}
                 />
               ))}
             </div>

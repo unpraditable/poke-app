@@ -2,6 +2,7 @@ import { pokemonTypeColors } from "@/constants/PokemonTypeColors";
 import Pokemon from "@/interfaces/Pokemon";
 import Link from "next/link";
 import React from "react";
+import TypeBadge from "./TypeBadge";
 
 export default function PokemonCard({ pokemon }: { pokemon: Pokemon }) {
   return (
@@ -12,21 +13,33 @@ export default function PokemonCard({ pokemon }: { pokemon: Pokemon }) {
       <div
         className={`${
           pokemonTypeColors[pokemon.types[0]]
-        } rounded-lg shadow-lg p-6 text-center`}
+        } rounded-lg shadow-lg px-6 py-2 text-center flex justify-between bg-[url(/pokeball.svg)] bg-size-[auto_100px] bg-no-repeat bg-bottom-right min-h-[200px]`}
       >
-        <div className="w-32 h-32 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+        <div className="">
+          <div className="flex flex-col gap-3 mb-6">
+            <h2 className="text-2xl font-semibold text-white capitalize">
+              {pokemon.name}
+            </h2>
+            {pokemon.types.map((type) => (
+              <TypeBadge
+                key={type}
+                type={type}
+                mainType={pokemonTypeColors[pokemon.types[0]]}
+              />
+            ))}
+          </div>
+        </div>
+        <div className="flex flex-col justify-between text-right">
+          <span className="text-white text-2xl font-bold">
+            #{pokemon.id.toString().padStart(3, "0")}
+          </span>
+
           <img
             src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`}
             alt={pokemon.name}
-            className="w-28 h-28"
+            className="w-auto h-48 object-contain text-right"
           />
         </div>
-        <span className="text-gray-600 text-sm">
-          #{pokemon.id.toString().padStart(3, "0")}
-        </span>
-        <h2 className="text-xl font-semibold text-gray-800 capitalize">
-          {pokemon.name}
-        </h2>
       </div>
     </Link>
   );
