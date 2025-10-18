@@ -61,7 +61,7 @@ export default function PokemonDetailClient({
       <div
         className={`${
           pokemonTypeColors[pokemon.types[0].type.name]
-        } shadow-lg p-8`}
+        } shadow-lg p-8  bg-[url(/pokeball.svg)] bg-size-[auto_400px] bg-no-repeat bg-bottom-right`}
       >
         <div className="flex justify-between align-middle">
           <div className="mb-6">
