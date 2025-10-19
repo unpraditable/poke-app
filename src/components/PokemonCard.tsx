@@ -13,7 +13,7 @@ export default function PokemonCard({ pokemon }: { pokemon: Pokemon }) {
       <div
         className={`${
           pokemonTypeColors[pokemon.types[0]]
-        } rounded-lg shadow-lg p-2 text-center flex justify-between bg-[url(/pokeball.svg)] bg-size-[auto_100px] md:bg-size-[auto_100px] bg-no-repeat bg-bottom-right min-h-[150px]`}
+        } rounded-lg shadow-lg p-2 text-center flex justify-between bg-[url(/pokeball.svg)] bg-size-[auto_100px] md:bg-size-[auto_200px] bg-no-repeat bg-bottom-right min-h-[150px] md:min-h-[200px]`}
       >
         <div className="">
           <div className="flex flex-col gap-3 mb-6">
@@ -37,7 +37,7 @@ export default function PokemonCard({ pokemon }: { pokemon: Pokemon }) {
           <img
             src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`}
             alt={pokemon.name}
-            className="w-24 h-auto md:w-36 lg:w-48 object-contain text-right"
+            className="w-24 h-auto max-h-48 md:w-36 lg:w-48 object-contain text-right"
           />
         </div>
       </div>
