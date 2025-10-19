@@ -46,11 +46,11 @@ export default function EvolutionCard({
               loading="lazy"
             />
           </div>
-          <span className="text-gray-400 text-sm font-bold block">
+          <span className="text-gray-400 text-sm lg:text-md font-bold block">
             #{evolution.id.toString().padStart(3, "0")}
           </span>
           <h3
-            className={`font-semibold capitalize ${
+            className={`font-semibold capitalize text-sm lg:text-md ${
               isCurrent ? "text-blue-600" : "text-gray-800"
             }`}
           >

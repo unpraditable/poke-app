@@ -8,7 +8,6 @@ export default function EvolutionChain({
   evolutions: EvolutionData[];
   currentPokemonId: number;
 }) {
-  console.log(evolutions, "evolutions");
   if (evolutions.length <= 1) {
     return (
       <div className="text-center py-8">
