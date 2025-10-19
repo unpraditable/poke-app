@@ -12,4 +12,5 @@ export default interface PokemonDetail {
     };
   };
   moves: { move: { name: string; url: string } }[];
+  species: { name: string };
 }

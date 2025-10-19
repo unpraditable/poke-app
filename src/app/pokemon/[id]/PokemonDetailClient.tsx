@@ -1,8 +1,10 @@
 "use client";
+import EvolutionList from "@/components/EvolutionChain";
 import TypeBadge from "@/components/TypeBadge";
 import { pokemonTypeColors } from "@/constants/PokemonTypeColors";
+import { EvolutionData } from "@/interfaces/EvolutionData";
 import PokemonDetail from "@/interfaces/PokemonDetail";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const statNames: { [key: string]: string } = {
   hp: "HP",
@@ -42,34 +44,125 @@ function StatBar({
 export default function PokemonDetailClient({
   pokemon,
 }: {
-  pokemon: PokemonDetail;
+  pokemon: PokemonDetail & {
+    evolutionData?: EvolutionData[];
+  };
 }) {
   const [selectedTab, setSelectedTab] = useState("about");
+  const [evolutionData, setEvolutionData] = useState<EvolutionData[]>([]);
+  const [loadingEvolution, setLoadingEvolution] = useState(false);
 
   const heightMeters = pokemon.height / 10;
   const weightKg = pokemon.weight / 10;
 
+  // Load evolution data when evolution tab is selected
+  useEffect(() => {
+    const loadEvolutionData = async () => {
+      if (
+        selectedTab === "evolution" &&
+        pokemon.id &&
+        evolutionData.length === 0
+      ) {
+        setLoadingEvolution(true);
+        try {
+          // Evolution chain exists in species endpoint, so we must call this API
+          const speciesResponse = await fetch(
+            `https://pokeapi.co/api/v2/pokemon-species/${pokemon.id}/`
+          );
+          const speciesData = await speciesResponse.json();
+
+          if (speciesData.evolution_chain?.url) {
+            // Then get the evolution chain
+            const evolutionResponse = await fetch(
+              speciesData.evolution_chain.url
+            );
+            const evolutionChainData = await evolutionResponse.json();
+
+            // Process the evolution chain into a flat array
+            // Note: Eevee's evolution is tricky, so it doesn't include all Eevee's cases
+            const processChain = (chain: {
+              // evolves_to is very tricky because it's recursive, I need to use any for this
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              evolves_to: any;
+              evolution_details: {
+                trigger: { name: string };
+                min_level: number;
+                item:
+                  | {
+                      name: string;
+                      url: string;
+                    }
+                  | undefined;
+              }[];
+              species: { url: string; name: string; evolves_to: [] };
+            }): EvolutionData[] => {
+              const evolutions: EvolutionData[] = [];
+              let current: {
+                // evolves_to is very tricky because it's recursive, I need to use any for this
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                evolves_to: any;
+                evolution_details: {
+                  trigger: { name: string };
+                  min_level: number;
+                  item:
+                    | {
+                        name: string;
+                        url: string;
+                      }
+                    | undefined;
+                }[];
+                species: { url: string; name: string; evolves_to: [] };
+              } = chain;
+
+              while (current) {
+                const speciesId = parseInt(
+                  current.species.url.split("/").slice(-2, -1)[0]
+                );
+
+                evolutions.push({
+                  id: speciesId,
+                  name: current.species.name,
+                  trigger:
+                    current.evolution_details?.[0]?.trigger?.name || "base",
+                  min_level: current.evolution_details?.[0]?.min_level,
+                  item: current.evolution_details?.[0]?.item,
+                });
+
+                // Move to next evolution if exists to check its next evolution
+                current = current.evolves_to?.[0] || null;
+              }
+
+              return evolutions;
+            };
+
+            const processedEvolutions = processChain(evolutionChainData.chain);
+            setEvolutionData(processedEvolutions);
+          }
+        } catch (error) {
+          console.error("Error loading evolution data:", error);
+        } finally {
+          setLoadingEvolution(false);
+        }
+      }
+    };
+
+    loadEvolutionData();
+  }, [selectedTab, pokemon.id, evolutionData.length]);
+
   return (
     <main className={`min-h-screen bg-gray-50`}>
-      {/* <Link
-          href="/"
-          className="inline-flex items-center gap-2 mb-6 text-blue-600 hover:text-blue-800 font-medium"
-        >
-          ← Back to Pokédex
-        </Link> */}
-
       <div
         className={`${
           pokemonTypeColors[pokemon.types[0].type.name]
-        } shadow-lg p-8  bg-[url(/pokeball.svg)] bg-size-[auto_400px] bg-no-repeat bg-bottom-right`}
+        } shadow-lg p-8  bg-[url(/pokeball.svg)] bg-size-[auto_400px] bg-no-repeat bg-bottom-right relative`}
       >
         <div className="flex justify-between align-middle">
-          <div className="mb-6">
-            <h1 className="text-4xl font-bold text-white text-shadow-gray-700 capitalize mb-3">
+          <div className="flex flex-col justify-center gap-3">
+            <h1 className="text-4xl font-bold text-white text-shadow-gray-700 capitalize">
               {pokemon.name}
             </h1>
 
-            <div className="flex gap-3 mb-6">
+            <div className="flex gap-3">
               {pokemon.types.map((typeInfo) => (
                 <TypeBadge
                   key={typeInfo.type.name}
@@ -80,7 +173,7 @@ export default function PokemonDetailClient({
             </div>
           </div>
 
-          <span className="text-white text-4xl font-bold">
+          <span className="text-white text-4xl font-bold self-center">
             #{pokemon.id.toString().padStart(3, "0")}
           </span>
         </div>
@@ -94,7 +187,7 @@ export default function PokemonDetailClient({
 
       <div className="bg-white shadow-lg pt-12">
         <div className="flex border-b">
-          {["about", "base stats", "moves"].map((tab) => (
+          {["about", "base stats", "evolution", "moves"].map((tab) => (
             <button
               key={tab}
               onClick={() => setSelectedTab(tab)}
@@ -145,6 +238,21 @@ export default function PokemonDetailClient({
               />
             ))}
           </div>
+        </div>
+      )}
+
+      {selectedTab === "evolution" && (
+        <div className="bg-white rounded-2xl shadow-lg p-6">
+          {loadingEvolution ? (
+            <div className="flex justify-center items-center py-12">
+              <span className="text-gray-500">Loading evolution data...</span>
+            </div>
+          ) : (
+            <EvolutionList
+              evolutions={evolutionData}
+              currentPokemonId={pokemon.id}
+            />
+          )}
         </div>
       )}
 
