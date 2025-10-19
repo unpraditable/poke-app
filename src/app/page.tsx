@@ -134,7 +134,7 @@ export default function Home() {
           Next.js Pokédex
         </h1>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-2 md:gap-6 mb-8">
           {pokemon.map((pokemon) => (
             <PokemonCard key={pokemon.id} pokemon={pokemon} />
           ))}

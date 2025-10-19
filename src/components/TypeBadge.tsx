@@ -7,7 +7,7 @@ export default function TypeBadge({
 }) {
   return (
     <span
-      className={`${mainType} brightness-110 text-gray-700 text-md font-bold px-3 py-1 rounded-lg capitalize`}
+      className={`${mainType} brightness-110 text-gray-700 text-xs sm:text-md font-bold p-1 sm:px-3 sm:py-1 rounded-lg capitalize`}
     >
       {type}
     </span>
